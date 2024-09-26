@@ -9,5 +9,7 @@ terraform {
 
 # Configure the AWS Provider
 provider "aws" {
-  region = var.aws_region
+  shared_config_files = ["C:/Users/r.ali/.aws/config"]
+  shared_credentials_files = ["C:/Users/r.ali/.aws/credentials"]
+  profile = "ml-reply"
 }

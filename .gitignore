@@ -2,3 +2,7 @@ personal-mlops.pem
 .terraform
 .terraform.lock.hcl
 terraform.tfstate.backup
+
+__pycache__/
+
+s3_contents/

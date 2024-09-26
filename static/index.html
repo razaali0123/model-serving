@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Form</title>
+</head>
+<body>
+    <h1>Question:</h1>
+    <form action="/process" method="post" enctype="multipart/form-data">
+        <!-- Text box for the question -->
+        <label for="question">Enter your question:</label>
+        <input type="text" id="question" name="question"><br><br>
+
+        <!-- File upload for the image -->
+        <label for="image">Upload an image:</label>
+        <input type="file" id="image" name="image" accept="image/*"><br><br>
+
+        <!-- Submit button -->
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

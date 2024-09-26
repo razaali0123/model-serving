@@ -20,7 +20,7 @@ source /home/ec2-user/moondream/venv/bin/activate
 pip install --upgrade pip
 
 
-aws s3 cp --recursive s3://mlops-personal/code/ .
+aws s3 cp --recursive s3://sagemaker-mlops-mlreply/code/ .
 # python3 -m ensurepip --upgrade
 pip install -r requirements.txt
 pip install "fastapi[standard]"
@@ -33,5 +33,5 @@ echo "################################## THE END OF THE WORLD ##################
 echo "################################## THE END OF THE WORLD ###############################################"
 echo "################################## THE END OF THE WORLD ###############################################"
 
-# uvicorn run:app --host 0.0.0.0 --port 8000
+uvicorn run:app --host 0.0.0.0 --port 8000
 

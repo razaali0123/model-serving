@@ -5,6 +5,10 @@ from pydantic import BaseModel
 import base64
 from io import BytesIO
 
+from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI, File, UploadFile, Form, Request
+from fastapi.responses import HTMLResponse
+
 
 class ImageQuestion(BaseModel):
     image: str
@@ -35,30 +39,83 @@ class EndpointHandler():
         return img
 
 app = FastAPI()
+app.mount("/app", StaticFiles(directory="static",html = True), name="static")
+
 handler = EndpointHandler()
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+# @app.get("/")
+# async def root():
+#     return {"message": "Hello World"}
 
-@app.post("/process")
-async def process_image_and_question(data: ImageQuestion):
+@app.post("/process",  response_class=HTMLResponse)
+async def process_image_and_question(data: Request):
     try:
         
         # Decode the base64 image
         # inputs = data.pop("inputs", data)
-        input_image = data.image
-        question = data.question
+        contents = await data.form()
+        input_image = contents["image"]
+        question = contents["question"]
+        im = Image.open(input_image.file)
+
         
-        img = handler.preprocess_image(input_image)
-        answer = handler.process(img, question)
+        # img = handler.preprocess_image(input_image)
+        answer = handler.process(im, question)
 
         # Return a response that confirms the image and question were received
-        return {
-            "message": "Image and question processed successfully",
-            "answer": answer,
-            "received_question": question
-        }
+        # return {
+        #     "message": "Image and question processed successfully",
+        #     "answer": answer,
+        #     "received_question": question
+        # }
+        
+        
+        html_content = f"""
+    <html>
+        <head>
+            <title>Processing Result</title>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    color: #333;
+                    padding: 20px;
+                }}
+                .container {{
+                    max-width: 600px;
+                    margin: auto;
+                    background: white;
+                    padding: 20px;
+                    border-radius: 10px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                }}
+                h1 {{
+                    color: #4CAF50;
+                }}
+                p {{
+                    font-size: 16px;
+                }}
+                .answer {{
+                    font-weight: bold;
+                    color: #333;
+                    background: #e0e0e0;
+                    padding: 10px;
+                    border-radius: 5px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>Processing Result</h1>
+                <p><strong>Message:</strong> Image and question processed successfully.</p>
+                <p><strong>Answer:</strong></p>
+                <div class="answer">{answer}</div>
+                <p><strong>Received Question:</strong> {question}</p>
+            </div>
+        </body>
+    </html>
+    """
+        return HTMLResponse(content=html_content, status_code=200)
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
